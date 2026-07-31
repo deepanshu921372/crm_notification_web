@@ -25,37 +25,48 @@ export default function NotificationBell() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="relative w-9 h-9 rounded hover:bg-gray-100 flex items-center justify-center"
+        className="relative w-9 h-9 rounded-md text-slate-600 hover:bg-slate-100 hover:text-slate-900 flex items-center justify-center"
         aria-label="Notifications"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
           <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
           <path d="M13.73 21a2 2 0 0 1-3.46 0" />
         </svg>
         {unread > 0 && (
-          <span className="absolute top-1 right-1 min-w-4 h-4 px-1 bg-red-600 text-white text-[10px] rounded-full flex items-center justify-center">
+          <span className="absolute top-0.5 right-0.5 min-w-4 h-4 px-1 bg-indigo-600 text-white text-[10px] font-semibold rounded-full flex items-center justify-center ring-2 ring-white">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-1 w-80 bg-white border rounded shadow-lg z-10">
-          <div className="px-4 py-2 border-b text-sm font-medium">Notifications</div>
+        <div className="absolute right-0 mt-2 w-80 card shadow-lg z-20 overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-slate-200 flex items-center justify-between">
+            <span className="text-sm font-semibold text-slate-900">Notifications</span>
+            {unread > 0 && <span className="badge">{unread} new</span>}
+          </div>
 
-          {latest.length === 0 && <p className="px-4 py-6 text-sm text-gray-500">Nothing yet.</p>}
+          {latest.length === 0 && (
+            <p className="px-4 py-8 text-sm text-slate-500 text-center">Nothing yet.</p>
+          )}
 
-          <div className="divide-y max-h-80 overflow-y-auto">
+          <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
             {latest.map((n) => (
-              <div key={n._id} className={`px-4 py-3 ${n.isRead ? '' : 'bg-blue-50'}`}>
-                <p className="text-sm">{n.message}</p>
-                <div className="flex items-center justify-between mt-1">
-                  <span className="text-xs text-gray-500">{timeAgo(n.createdAt)}</span>
+              <div key={n._id} className={`px-4 py-3 ${n.isRead ? '' : 'bg-indigo-50/40'}`}>
+                <p className="text-sm text-slate-700">{n.message}</p>
+                <div className="flex items-center justify-between mt-1.5">
+                  <span className="text-xs text-slate-400">{timeAgo(n.createdAt)}</span>
                   {!n.isRead && (
-                    <button
-                      onClick={() => markRead(n._id)}
-                      className="text-xs text-gray-600 hover:text-gray-900 underline"
-                    >
+                    <button onClick={() => markRead(n._id)} className="link-action">
                       Mark as read
                     </button>
                   )}
@@ -67,7 +78,7 @@ export default function NotificationBell() {
           <Link
             to="/notifications"
             onClick={() => setOpen(false)}
-            className="block px-4 py-2 border-t text-sm text-center text-gray-600 hover:text-gray-900"
+            className="block px-4 py-2.5 border-t border-slate-200 text-sm font-medium text-center text-slate-600 hover:text-slate-900 hover:bg-slate-50"
           >
             View all
           </Link>

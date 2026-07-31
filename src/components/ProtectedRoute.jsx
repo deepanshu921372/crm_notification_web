@@ -5,7 +5,7 @@ export default function ProtectedRoute({ children, adminOnly }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="p-8 text-gray-500">Loading...</div>;
+    return <div className="p-8 text-sm text-slate-500">Loading...</div>;
   }
 
   if (!user) {

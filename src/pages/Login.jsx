@@ -28,49 +28,53 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <form onSubmit={handleSubmit} className="w-full max-w-sm bg-white border rounded p-6">
-        <h1 className="text-xl font-semibold mb-1">Sign in</h1>
-        <p className="text-sm text-gray-500 mb-5">Use a seeded account to try the demo.</p>
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-6">
+          <div className="w-11 h-11 rounded-lg bg-indigo-600 text-white font-semibold flex items-center justify-center mx-auto mb-3">
+            C
+          </div>
+          <h1 className="text-lg font-semibold text-slate-900">Sign in to CRM</h1>
+          <p className="text-sm text-slate-500 mt-1">Use a seeded account to try the demo.</p>
+        </div>
 
-        {error && (
-          <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">
-            {error}
-          </p>
-        )}
+        <form onSubmit={handleSubmit} className="card p-6">
+          {error && (
+            <p className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+              {error}
+            </p>
+          )}
 
-        <label className="block text-sm mb-1">Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full border rounded px-3 py-2 mb-4 text-sm"
-        />
+          <label className="label">Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            placeholder="admin@crm.test"
+            className="input mb-4"
+          />
 
-        <label className="block text-sm mb-1">Password</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full border rounded px-3 py-2 mb-5 text-sm"
-        />
+          <label className="label">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="input mb-5"
+          />
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full bg-gray-900 text-white rounded py-2 text-sm disabled:opacity-50"
-        >
-          {submitting ? 'Signing in...' : 'Sign in'}
-        </button>
+          <button type="submit" disabled={submitting} className="btn-primary w-full">
+            {submitting ? 'Signing in...' : 'Sign in'}
+          </button>
+        </form>
 
-        <p className="mt-4 text-sm text-gray-500">
+        <p className="mt-5 text-center text-sm text-slate-500">
           No account?{' '}
-          <Link to="/register" className="text-gray-900 underline">
+          <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-700">
             Register
           </Link>
         </p>
-      </form>
+      </div>
     </div>
   );
 }

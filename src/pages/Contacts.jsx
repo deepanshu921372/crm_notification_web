@@ -11,6 +11,7 @@ export default function Contacts() {
   const [contacts, setContacts] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [form, setForm] = useState(empty);
+  const [editingId, setEditingId] = useState(null);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -22,18 +23,39 @@ export default function Contacts() {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
+  function startEdit(contact) {
+    setEditingId(contact._id);
+    setForm({
+      name: contact.name,
+      email: contact.email || '',
+      phone: contact.phone || '',
+      companyId: contact.companyId?._id || ''
+    });
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setForm(empty);
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
 
     try {
-      await api.post('/contacts', form);
+      if (editingId) {
+        await api.put(`/contacts/${editingId}`, form);
+        toast.success('Contact updated');
+      } else {
+        await api.post('/contacts', form);
+        toast.success('Contact created');
+      }
+
       const res = await api.get('/contacts');
       setContacts(res.data);
-      setForm(empty);
-      toast.success('Contact created');
+      cancelEdit();
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Could not create contact');
+      toast.error(err.response?.data?.message || 'Could not save contact');
     } finally {
       setSaving(false);
     }
@@ -43,6 +65,11 @@ export default function Contacts() {
     try {
       await api.delete(`/contacts/${id}`);
       setContacts((prev) => prev.filter((c) => c._id !== id));
+
+      if (editingId === id) {
+        cancelEdit();
+      }
+
       toast.success('Contact deleted');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Could not delete contact');
@@ -89,13 +116,25 @@ export default function Contacts() {
               ))}
             </select>
           </div>
-          <button
-            type="submit"
-            disabled={saving}
-            className="mt-3 bg-gray-900 text-white rounded px-4 py-2 text-sm disabled:opacity-50"
-          >
-            {saving ? 'Adding...' : 'Add contact'}
-          </button>
+
+          <div className="mt-3 flex gap-2">
+            <button
+              type="submit"
+              disabled={saving}
+              className="bg-gray-900 text-white rounded px-4 py-2 text-sm disabled:opacity-50"
+            >
+              {saving ? 'Saving...' : editingId ? 'Save changes' : 'Add contact'}
+            </button>
+            {editingId && (
+              <button
+                type="button"
+                onClick={cancelEdit}
+                className="border rounded px-4 py-2 text-sm hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </form>
       )}
 
@@ -113,12 +152,20 @@ export default function Contacts() {
                 </p>
               </div>
               {isAdmin && (
-                <button
-                  onClick={() => handleDelete(c._id)}
-                  className="text-xs text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => startEdit(c)}
+                    className="text-xs text-gray-600 hover:underline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(c._id)}
+                    className="text-xs text-red-600 hover:underline"
+                  >
+                    Delete
+                  </button>
+                </div>
               )}
             </div>
           ))}

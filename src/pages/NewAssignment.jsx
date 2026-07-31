@@ -55,18 +55,20 @@ export default function NewAssignment() {
 
   return (
     <div className="max-w-lg">
-      <h1 className="text-xl font-semibold mb-1">New assignment</h1>
-      <p className="text-sm text-gray-500 mb-5">
-        The user gets a live notification as soon as you assign.
-      </p>
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-slate-900">New assignment</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          The user gets a live notification as soon as you assign.
+        </p>
+      </div>
 
-      <form onSubmit={handleSubmit} className="bg-white border rounded p-4">
-        <label className="block text-sm mb-1">User</label>
+      <form onSubmit={handleSubmit} className="card p-5">
+        <label className="label">User</label>
         <select
           value={form.userId}
           onChange={(e) => update('userId', e.target.value)}
           required
-          className="w-full border rounded px-3 py-2 mb-4 text-sm bg-white"
+          className="input mb-5"
         >
           <option value="">Select a user</option>
           {users.map((u) => (
@@ -76,15 +78,17 @@ export default function NewAssignment() {
           ))}
         </select>
 
-        <label className="block text-sm mb-1">Assign to</label>
-        <div className="flex gap-2 mb-4">
+        <label className="label">Assign to</label>
+        <div className="inline-flex rounded-md border border-slate-300 p-0.5 mb-3">
           {['company', 'contact'].map((type) => (
             <button
               key={type}
               type="button"
               onClick={() => changeTargetType(type)}
-              className={`text-sm px-3 py-1.5 rounded border capitalize ${
-                form.targetType === type ? 'bg-gray-900 text-white border-gray-900' : 'bg-white'
+              className={`text-sm px-4 py-1.5 rounded capitalize transition-colors ${
+                form.targetType === type
+                  ? 'bg-slate-900 text-white font-medium'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               {type}
@@ -96,7 +100,7 @@ export default function NewAssignment() {
           value={form.targetId}
           onChange={(e) => update('targetId', e.target.value)}
           required
-          className="w-full border rounded px-3 py-2 mb-4 text-sm bg-white"
+          className="input mb-5"
         >
           <option value="">Select a {form.targetType}</option>
           {targets.map((t) => (
@@ -106,11 +110,11 @@ export default function NewAssignment() {
           ))}
         </select>
 
-        <label className="block text-sm mb-1">Role on this record</label>
+        <label className="label">Role on this record</label>
         <select
           value={form.role}
           onChange={(e) => update('role', e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-5 text-sm bg-white"
+          className="input mb-6"
         >
           {roles.map((r) => (
             <option key={r.value} value={r.value}>
@@ -119,11 +123,7 @@ export default function NewAssignment() {
           ))}
         </select>
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-gray-900 text-white rounded px-4 py-2 text-sm disabled:opacity-50"
-        >
+        <button type="submit" disabled={saving} className="btn-primary">
           {saving ? 'Assigning...' : 'Assign'}
         </button>
       </form>

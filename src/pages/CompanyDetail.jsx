@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -34,34 +34,60 @@ export default function CompanyDetail() {
   }
 
   if (error) {
-    return <p className="text-sm text-gray-500">{error}</p>;
+    return (
+      <div className="card p-8 text-center">
+        <p className="text-sm text-slate-500">{error}</p>
+      </div>
+    );
   }
 
   if (!data) {
-    return <p className="text-sm text-gray-500">Loading...</p>;
+    return <p className="text-sm text-slate-500">Loading...</p>;
   }
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">{data.company.name}</h1>
-      <p className="text-sm text-gray-500 mb-6">
-        {data.company.industry || 'No industry'}
-        {data.company.website && ` · ${data.company.website}`}
-      </p>
+      <Link to="/companies" className="text-sm text-slate-500 hover:text-slate-900">
+        Back to companies
+      </Link>
 
-      <h2 className="text-sm font-medium mb-2">Contacts</h2>
+      <div className="flex items-center gap-4 mt-4 mb-8">
+        <div className="w-12 h-12 rounded-lg bg-indigo-100 text-indigo-700 font-semibold text-lg flex items-center justify-center">
+          {data.company.name.charAt(0)}
+        </div>
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">{data.company.name}</h1>
+          <p className="text-sm text-slate-500">
+            {data.company.industry || 'No industry'}
+            {data.company.website && ` · ${data.company.website}`}
+          </p>
+        </div>
+      </div>
+
+      <h2 className="text-sm font-semibold text-slate-900 mb-3">
+        Contacts <span className="text-slate-400 font-normal">({data.contacts.length})</span>
+      </h2>
+
       {data.contacts.length === 0 && (
-        <p className="text-sm text-gray-500 mb-6">No contacts for this company.</p>
+        <div className="card p-6 text-center mb-8">
+          <p className="text-sm text-slate-500">No contacts for this company.</p>
+        </div>
       )}
+
       {data.contacts.length > 0 && (
-        <div className="bg-white border rounded divide-y mb-6">
+        <div className="card divide-y divide-slate-100 mb-8">
           {data.contacts.map((c) => (
-            <div key={c._id} className="px-4 py-3">
-              <p className="text-sm">{c.name}</p>
-              <p className="text-xs text-gray-500">
-                {c.email || 'No email'}
-                {c.phone && ` · ${c.phone}`}
-              </p>
+            <div key={c._id} className="px-4 py-3 flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold flex items-center justify-center">
+                {c.name.charAt(0)}
+              </div>
+              <div>
+                <p className="text-sm font-medium text-slate-900">{c.name}</p>
+                <p className="text-xs text-slate-500">
+                  {c.email || 'No email'}
+                  {c.phone && ` · ${c.phone}`}
+                </p>
+              </div>
             </div>
           ))}
         </div>
@@ -69,20 +95,38 @@ export default function CompanyDetail() {
 
       {isAdmin && (
         <>
-          <h2 className="text-sm font-medium mb-2">Assigned users</h2>
-          {assignees.length === 0 && <p className="text-sm text-gray-500">Nobody assigned yet.</p>}
+          <h2 className="text-sm font-semibold text-slate-900 mb-3">
+            Assigned users <span className="text-slate-400 font-normal">({assignees.length})</span>
+          </h2>
+
+          {assignees.length === 0 && (
+            <div className="card p-6 text-center">
+              <p className="text-sm text-slate-500">Nobody assigned yet.</p>
+              <Link
+                to="/assignments/new"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-700 mt-2 inline-block"
+              >
+                Assign someone
+              </Link>
+            </div>
+          )}
+
           {assignees.length > 0 && (
-            <div className="bg-white border rounded divide-y">
+            <div className="card divide-y divide-slate-100">
               {assignees.map((a) => (
                 <div key={a._id} className="px-4 py-3 flex items-center justify-between">
-                  <div>
-                    <p className="text-sm">{a.userId.name}</p>
-                    <p className="text-xs text-gray-500">{a.role.replace('_', ' ')}</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 text-xs font-semibold flex items-center justify-center">
+                      {a.userId.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-slate-900">{a.userId.name}</p>
+                      <p className="text-xs text-slate-500 capitalize">
+                        {a.role.replace('_', ' ')}
+                      </p>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => handleUnassign(a._id)}
-                    className="text-xs text-red-600 hover:underline"
-                  >
+                  <button onClick={() => handleUnassign(a._id)} className="link-danger">
                     Unassign
                   </button>
                 </div>

@@ -9,6 +9,12 @@ const filters = [
   { value: 'reminder', label: 'Reminders' }
 ];
 
+const typeStyles = {
+  assignment: 'bg-indigo-50 text-indigo-700',
+  reminder: 'bg-amber-50 text-amber-700',
+  system: 'bg-slate-100 text-slate-700'
+};
+
 export default function Notifications() {
   const { items, unread, markRead, markAllRead } = useNotifications();
   const [filter, setFilter] = useState('all');
@@ -17,28 +23,29 @@ export default function Notifications() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-xl font-semibold">Notifications</h1>
-          <p className="text-sm text-gray-500">{unread} unread</p>
+          <h1 className="text-2xl font-semibold text-slate-900">Notifications</h1>
+          <p className="text-sm text-slate-500 mt-1">
+            {unread > 0 ? `${unread} unread` : 'All caught up'}
+          </p>
         </div>
         {unread > 0 && (
-          <button
-            onClick={markAllRead}
-            className="text-sm border rounded px-3 py-1.5 hover:bg-gray-50"
-          >
+          <button onClick={markAllRead} className="btn-secondary">
             Mark all as read
           </button>
         )}
       </div>
 
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-5">
         {filters.map((f) => (
           <button
             key={f.value}
             onClick={() => setFilter(f.value)}
-            className={`text-sm px-3 py-1 rounded border ${
-              filter === f.value ? 'bg-gray-900 text-white border-gray-900' : 'bg-white'
+            className={`text-sm px-3 py-1.5 rounded-md border transition-colors ${
+              filter === f.value
+                ? 'bg-slate-900 text-white border-slate-900 font-medium'
+                : 'bg-white border-slate-300 text-slate-600 hover:text-slate-900'
             }`}
           >
             {f.label}
@@ -46,37 +53,48 @@ export default function Notifications() {
         ))}
       </div>
 
-      {visible.length === 0 && <p className="text-sm text-gray-500">Nothing here.</p>}
+      {visible.length === 0 && (
+        <div className="card p-8 text-center">
+          <p className="text-sm text-slate-500">Nothing here.</p>
+        </div>
+      )}
 
-      <div className="bg-white border rounded divide-y">
-        {visible.map((n) => (
-          <div key={n._id} className={`px-4 py-3 ${n.isRead ? '' : 'bg-blue-50'}`}>
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-sm font-medium">{n.title}</p>
-                {n.link ? (
-                  <Link to={n.link} className="text-sm text-gray-600 hover:underline">
-                    {n.message}
-                  </Link>
-                ) : (
-                  <p className="text-sm text-gray-600">{n.message}</p>
+      {visible.length > 0 && (
+        <div className="card divide-y divide-slate-100">
+          {visible.map((n) => (
+            <div key={n._id} className={`px-4 py-4 ${n.isRead ? '' : 'bg-indigo-50/40'}`}>
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    {!n.isRead && <span className="w-1.5 h-1.5 rounded-full bg-indigo-600" />}
+                    <p className="text-sm font-medium text-slate-900">{n.title}</p>
+                    <span className={`badge capitalize ${typeStyles[n.type]}`}>{n.type}</span>
+                  </div>
+
+                  {n.link ? (
+                    <Link to={n.link} className="text-sm text-slate-600 hover:text-indigo-600">
+                      {n.message}
+                    </Link>
+                  ) : (
+                    <p className="text-sm text-slate-600">{n.message}</p>
+                  )}
+
+                  <p className="text-xs text-slate-400 mt-1">{timeAgo(n.createdAt)}</p>
+                </div>
+
+                {!n.isRead && (
+                  <button
+                    onClick={() => markRead(n._id)}
+                    className="link-action whitespace-nowrap shrink-0"
+                  >
+                    Mark as read
+                  </button>
                 )}
-                <p className="text-xs text-gray-500">
-                  {n.type} · {timeAgo(n.createdAt)}
-                </p>
               </div>
-              {!n.isRead && (
-                <button
-                  onClick={() => markRead(n._id)}
-                  className="text-xs text-gray-600 hover:text-gray-900 underline whitespace-nowrap"
-                >
-                  Mark as read
-                </button>
-              )}
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

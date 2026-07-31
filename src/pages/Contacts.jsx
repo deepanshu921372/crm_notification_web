@@ -78,59 +78,72 @@ export default function Contacts() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold mb-4">Contacts</h1>
+      <div className="mb-6">
+        <h1 className="text-2xl font-semibold text-slate-900">Contacts</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          {contacts.length} {contacts.length === 1 ? 'contact' : 'contacts'}
+        </p>
+      </div>
 
       {isAdmin && (
-        <form onSubmit={handleSubmit} className="bg-white border rounded p-4 mb-6">
-          <div className="grid sm:grid-cols-4 gap-3">
-            <input
-              placeholder="Name"
-              value={form.name}
-              onChange={(e) => update('name', e.target.value)}
-              required
-              className="border rounded px-3 py-2 text-sm"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={(e) => update('email', e.target.value)}
-              className="border rounded px-3 py-2 text-sm"
-            />
-            <input
-              placeholder="Phone"
-              value={form.phone}
-              onChange={(e) => update('phone', e.target.value)}
-              className="border rounded px-3 py-2 text-sm"
-            />
-            <select
-              value={form.companyId}
-              onChange={(e) => update('companyId', e.target.value)}
-              className="border rounded px-3 py-2 text-sm bg-white"
-            >
-              <option value="">No company</option>
-              {companies.map((c) => (
-                <option key={c._id} value={c._id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+        <form onSubmit={handleSubmit} className="card p-5 mb-6">
+          <p className="text-sm font-semibold text-slate-900 mb-4">
+            {editingId ? 'Edit contact' : 'Add a contact'}
+          </p>
+
+          <div className="grid sm:grid-cols-4 gap-4">
+            <div>
+              <label className="label">Name</label>
+              <input
+                value={form.name}
+                onChange={(e) => update('name', e.target.value)}
+                required
+                placeholder="Priya Sharma"
+                className="input"
+              />
+            </div>
+            <div>
+              <label className="label">Email</label>
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => update('email', e.target.value)}
+                placeholder="priya@acme.com"
+                className="input"
+              />
+            </div>
+            <div>
+              <label className="label">Phone</label>
+              <input
+                value={form.phone}
+                onChange={(e) => update('phone', e.target.value)}
+                placeholder="9810011111"
+                className="input"
+              />
+            </div>
+            <div>
+              <label className="label">Company</label>
+              <select
+                value={form.companyId}
+                onChange={(e) => update('companyId', e.target.value)}
+                className="input"
+              >
+                <option value="">No company</option>
+                {companies.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="mt-3 flex gap-2">
-            <button
-              type="submit"
-              disabled={saving}
-              className="bg-gray-900 text-white rounded px-4 py-2 text-sm disabled:opacity-50"
-            >
+          <div className="mt-4 flex gap-2">
+            <button type="submit" disabled={saving} className="btn-primary">
               {saving ? 'Saving...' : editingId ? 'Save changes' : 'Add contact'}
             </button>
             {editingId && (
-              <button
-                type="button"
-                onClick={cancelEdit}
-                className="border rounded px-4 py-2 text-sm hover:bg-gray-50"
-              >
+              <button type="button" onClick={cancelEdit} className="btn-secondary">
                 Cancel
               </button>
             )}
@@ -138,31 +151,39 @@ export default function Contacts() {
         </form>
       )}
 
-      {contacts.length === 0 && <p className="text-sm text-gray-500">No contacts yet.</p>}
+      {contacts.length === 0 && (
+        <div className="card p-8 text-center">
+          <p className="text-sm text-slate-500">No contacts yet.</p>
+        </div>
+      )}
 
       {contacts.length > 0 && (
-        <div className="bg-white border rounded divide-y">
+        <div className="card divide-y divide-slate-100">
           {contacts.map((c) => (
-            <div key={c._id} className="px-4 py-3 flex items-center justify-between">
-              <div>
-                <p className="text-sm">{c.name}</p>
-                <p className="text-xs text-gray-500">
-                  {c.companyId?.name || 'No company'}
-                  {c.email && ` · ${c.email}`}
-                </p>
+            <div
+              key={c._id}
+              className={`px-4 py-3 flex items-center justify-between ${
+                editingId === c._id ? 'bg-indigo-50/50' : ''
+              }`}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold flex items-center justify-center shrink-0">
+                  {c.name.charAt(0)}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-900">{c.name}</p>
+                  <p className="text-xs text-slate-500 truncate">
+                    {c.companyId?.name || 'No company'}
+                    {c.email && ` · ${c.email}`}
+                  </p>
+                </div>
               </div>
               {isAdmin && (
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => startEdit(c)}
-                    className="text-xs text-gray-600 hover:underline"
-                  >
+                <div className="flex gap-4 shrink-0 ml-4">
+                  <button onClick={() => startEdit(c)} className="link-action">
                     Edit
                   </button>
-                  <button
-                    onClick={() => handleDelete(c._id)}
-                    className="text-xs text-red-600 hover:underline"
-                  >
+                  <button onClick={() => handleDelete(c._id)} className="link-danger">
                     Delete
                   </button>
                 </div>

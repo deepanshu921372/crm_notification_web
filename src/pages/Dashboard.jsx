@@ -1,18 +1,24 @@
 import { useEffect, useState } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import { useNotifications } from '../context/NotificationContext';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { lastPush } = useNotifications();
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (lastPush && lastPush.type !== 'assignment') {
+      return;
+    }
+
     api
       .get('/assignments/mine')
       .then((res) => setAssignments(res.data))
       .finally(() => setLoading(false));
-  }, []);
+  }, [lastPush]);
 
   return (
     <div>

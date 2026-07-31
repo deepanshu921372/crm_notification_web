@@ -7,6 +7,10 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Companies from './pages/Companies';
+import CompanyDetail from './pages/CompanyDetail';
+import Contacts from './pages/Contacts';
+import NewAssignment from './pages/NewAssignment';
 import Notifications from './pages/Notifications';
 
 export default function App() {
@@ -27,7 +31,18 @@ export default function App() {
               }
             >
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/companies" element={<Companies />} />
+              <Route path="/companies/:id" element={<CompanyDetail />} />
+              <Route path="/contacts" element={<Contacts />} />
               <Route path="/notifications" element={<Notifications />} />
+              <Route
+                path="/assignments/new"
+                element={
+                  <ProtectedRoute adminOnly>
+                    <NewAssignment />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
 
             <Route path="*" element={<Navigate to="/dashboard" replace />} />

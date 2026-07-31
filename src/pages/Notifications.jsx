@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useNotifications } from '../context/NotificationContext';
 import { timeAgo } from '../utils/time';
 
@@ -53,10 +54,16 @@ export default function Notifications() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm font-medium">{n.title}</p>
-                <p className="text-sm text-gray-600">{n.message}</p>
-                <span className="text-xs text-gray-500">
+                {n.link ? (
+                  <Link to={n.link} className="text-sm text-gray-600 hover:underline">
+                    {n.message}
+                  </Link>
+                ) : (
+                  <p className="text-sm text-gray-600">{n.message}</p>
+                )}
+                <p className="text-xs text-gray-500">
                   {n.type} · {timeAgo(n.createdAt)}
-                </span>
+                </p>
               </div>
               {!n.isRead && (
                 <button
